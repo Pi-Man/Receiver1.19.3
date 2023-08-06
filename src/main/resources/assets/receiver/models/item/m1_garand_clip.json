@@ -1,0 +1,4 @@
+{
+  "loader": "receiver:bbmodel",
+  "model": "receiver:m1_garand_clip"
+}

@@ -1,0 +1,4 @@
+{
+  "loader": "receiver:bbmodel",
+  "model": "receiver:bullet30-06casing"
+}
