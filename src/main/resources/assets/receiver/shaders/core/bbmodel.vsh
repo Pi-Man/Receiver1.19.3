@@ -16,7 +16,7 @@ uniform vec3 Light1_Direction;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
-uniform mat4 Bones[16];
+uniform mat4 Bones[4];
 
 out float vertexDistance;
 out vec4 vertexColor;

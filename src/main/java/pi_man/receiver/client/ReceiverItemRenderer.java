@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
@@ -37,7 +36,9 @@ public class ReceiverItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
     @Override
     public void renderByItem(ItemStack itemStack, ItemTransforms.TransformType transformType, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, int packedOverlay) {
+        Receiver.ClientModEvents.ReceiverRenderType.SOLID.setupRenderState();
         renderModel(ForgeRegistries.ITEMS.getKey(itemStack.getItem()), itemStack, poseStack, packedLight);
+        Receiver.ClientModEvents.ReceiverRenderType.SOLID.clearRenderState();
     }
 
     public void renderModel(ResourceLocation modelLocation, ItemStack itemStack, PoseStack poseStack, int packedLight) {
@@ -52,6 +53,7 @@ public class ReceiverItemRenderer extends BlockEntityWithoutLevelRenderer {
                 int i = 0;
                 List<ItemTransform> itemTransforms = bakedBBModel.getTransformations();
                 for (ItemTransform itemTransform : itemTransforms) {
+                    if (i >= 4) break;
                     poseStack.pushPose();
                     itemTransform.apply(false, poseStack);
                     Matrix4f mat = poseStack.last().pose();
@@ -62,22 +64,20 @@ public class ReceiverItemRenderer extends BlockEntityWithoutLevelRenderer {
                     i++;
                     poseStack.popPose();
                 }
-                bones.upload();
+                //bones.upload();
             }
             if (UV2 != null) {
                 int aint[] = new int[2];
                 aint[0] = (packedLight & 0xFFFF);
                 aint[1] = ((packedLight >> 16) & 0xFFFF);
                 UV2.set(aint[0], aint[1]);
-                UV2.upload();
+                //UV2.upload();
             }
 
             VertexBuffer vertexBuffer = bakedBBModel.getVertexBuffer();
 
-            Receiver.ClientModEvents.ReceiverRenderType.SOLID.setupRenderState();
             vertexBuffer.bind();
             vertexBuffer.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), RenderSystem.getShader());
-            Receiver.ClientModEvents.ReceiverRenderType.SOLID.clearRenderState();
 
             bakedBBModel.getAnimator().ifPresent(animator -> {
                 animator.getSubModels().forEach(bone -> {
